@@ -1,0 +1,196 @@
+package ro.ase.acs.models;
+  
+import ro.ase.acs.contracts.Playable;
+
+public abstract class PlayingCard implements Playable {
+
+	protected String rank;
+	protected String suit;
+	protected int quantity;
+	
+	public PlayingCard(String rank, String suit, int quantity) throws Exception {
+		super();
+		this.rank = rank;
+		if (suit == "S" || suit == "D" || suit == "H" || suit == "C")
+		 {
+			this.suit = suit;
+		 }
+		else throw new Exception("This suit is invalid");
+		 
+		this.quantity = quantity;
+	}
+
+	@Override
+	public float getPoints() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	
+	public abstract boolean isGameOver(PlayingCard card);
+
+	public String getRank() {
+		return rank;
+	}
+
+	public String getSuit() {
+		return suit;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+	
+	
+	
+}
+
+
+
+package ro.ase.acs.models;
+
+import java.util.ArrayList;
+
+//import java.util.HashMap;
+
+public class BlackJackPlayingCard extends PlayingCard implements Cloneable{
+	
+	private int score;
+	
+//	public static HashMap<Integer, BlackJackPlayingCard> hashMap = new HashMap<Integer, BlackJackPlayingCard>();
+	
+	public static ArrayList<BlackJackPlayingCard> cardList = new ArrayList<BlackJackPlayingCard>();
+
+	public BlackJackPlayingCard(String rank, String suit, int quantity) throws Exception {
+		super(rank, suit, quantity);
+		// TODO Auto-generated constructor stub
+		
+		try 
+		{
+			int rankInt = Integer.parseInt(rank);
+			if (rankInt >= 2 && rankInt <= 9) {
+				score = rankInt;
+			}
+		}catch(Exception e) {
+			
+		}
+		
+		
+		if (rank == "T") {
+			score = 10;
+		}
+		
+		else if (rank == "A") {
+			score = 11;
+		}
+		
+		else if (rank == "J") {
+			score = 12;
+		}
+		
+		else if (rank == "Q") {
+			score = 13;
+		}
+		
+		else if (rank == "K") {
+			score = 14;
+		}
+		
+	}
+
+	
+
+	@Override
+	public boolean isGameOver(PlayingCard card) {
+		// TODO Auto-generated method stub
+		if (card.quantity * ((BlackJackPlayingCard)card).score + quantity * score > 21) 
+			{
+			return true;
+			}
+
+
+		return false;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		BlackJackPlayingCard copy = (BlackJackPlayingCard)super.clone();
+		
+		copy.quantity = quantity;
+		copy.rank = rank;
+		copy.suit = suit;
+		copy.score = score;
+		
+		return copy;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	@Override
+	public float getPoints() {
+		// TODO Auto-generated method stub
+		return score;
+	}
+
+	@Override
+	public String toString() {
+		return "> " + rank + " " + suit + " " + quantity + " " + score;
+	}
+	
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		
+		if (obj == null) {
+			return false;
+		}
+		if (obj.getClass() != this.getClass()) {
+			return false;
+		}
+		
+		BlackJackPlayingCard card = (BlackJackPlayingCard)obj;
+		
+		if (this.score != card.score || this.rank.equals(card.rank) == false || this.suit.equals(card.suit) || this.quantity != card.quantity) {
+			return false;
+		}
+		
+		return true;
+	}
+
+
+
+	public static void drawCard(BlackJackPlayingCard card) {
+		
+		for (BlackJackPlayingCard bjCard : cardList) {
+			if (bjCard.equals(card))
+			{
+				bjCard.quantity += card.quantity;
+				return;
+			}
+			
+		}
+		
+		cardList.add(card);
+	}
+	
+	public static String getStatus() {
+		
+		String status = "";
+		for (BlackJackPlayingCard card : cardList) {
+			
+			status += card.toString() + "\n";
+		}
+		
+		return status;
+	}
+	
+	
+	
+
+	
+}
